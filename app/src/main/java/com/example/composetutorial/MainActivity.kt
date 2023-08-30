@@ -38,6 +38,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 
@@ -84,7 +85,7 @@ fun MessageCard(msg : Message){
         Spacer(modifier = Modifier.width(8.dp))
         // We keep track if the message is expanded or not in this
         // variable
-        var isExpanded by remember { mutableStateOf(false) }
+        var isExpanded by rememberSaveable { mutableStateOf(false) }
         // when click the card, change isExpanded values
         Column (modifier = Modifier.clickable {}
         ) {
