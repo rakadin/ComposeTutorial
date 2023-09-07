@@ -1,10 +1,19 @@
 package com.example.composetutorial
 
+import android.content.Intent
 import android.content.res.Configuration
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,6 +43,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +51,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +68,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
 
                 ) {
-                    Conversation(messages = SampleData.conversationSample)
+                    Conversation(messages = SampleData.conversationSample, navController = NavController(this))
                 }
             }
         }
@@ -63,18 +77,20 @@ class MainActivity : ComponentActivity() {
 
 data class Message(val author : String, val body:String)
 @Composable
-fun Conversation(messages: List<Message>) {
+fun Conversation(messages: List<Message>,navController: NavController) {
     LazyColumn {
         items(messages) { message ->
-            MessageCard(message)
+            MessageCard(message, navController )
         }
     }
 }
 @Composable
-fun MessageCard(msg : Message){
+fun MessageCard(msg : Message,navController : NavController){
+    val mcontext = LocalContext.current
     Row(modifier = Modifier
         .padding(all = 8.dp)) {
-        Image(painter = painterResource(id = R.drawable.tree_cloud_icon),
+        Icon(
+            painter = painterResource(id = R.drawable.tree_cloud_icon),
             contentDescription = "message avatar",
             modifier = Modifier
                 .padding(all = 4.dp)
@@ -86,6 +102,20 @@ fun MessageCard(msg : Message){
         // We keep track if the message is expanded or not in this
         // variable
         var isExpanded by rememberSaveable { mutableStateOf(false) }
+        val extraPadding by animateDpAsState( if(isExpanded) 30.dp else 0.dp,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow
+            ))
+        // Define an animated color state
+        val targetColor = if (isExpanded) Color.Red else Color.Green
+        val animatedColor by animateColorAsState(
+            targetValue = targetColor,
+            animationSpec = tween(
+                durationMillis = 1000, // Animation duration
+                easing = LinearOutSlowInEasing // Easing function
+            )
+        )
         // when click the card, change isExpanded values
         Column (modifier = Modifier.clickable {}
         ) {
@@ -96,7 +126,7 @@ fun MessageCard(msg : Message){
 
             Surface(shape = MaterialTheme.shapes.medium, shadowElevation = 2.dp) {
                 Text(text = msg.body,
-                    modifier = Modifier.padding(all = 2.dp),
+                    modifier = Modifier.padding(bottom = extraPadding.coerceAtLeast(0.dp)),
                     // If the message is expanded, we display all its content
                     // otherwise we only display the first line
                     maxLines = if (isExpanded) Int.MAX_VALUE else 1,
@@ -105,23 +135,25 @@ fun MessageCard(msg : Message){
 
         }
         OutlinedButton(onClick = { isExpanded = !isExpanded },
-            modifier = Modifier.padding(6.dp),
+            modifier = Modifier.padding(all = 6.dp),
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = if(isExpanded) Color.Red else Color.Blue, // set text color for button)
+                contentColor = animatedColor // set text color for button)
                 )
         ) {
             Text(if (isExpanded) "Less" else "More")
+        }
+        ElevatedButton(onClick =
+        {   val intent = Intent(mcontext,MainActivity2::class.java)
+            intent.putExtra("value1",msg.author+" send " +msg.body)
+            mcontext.startActivity(intent) },
+            modifier = Modifier.padding(all = 6.dp)) {
+            Text("Share")
         }
 
     }
 
 }
 
-@Preview
-@Composable
-fun PreviewMessageCard(){
-    MessageCard(msg = Message("Quan","Xin chao từ quân"))
-}
 /**
  * SampleData for Jetpack Compose Tutorial
  */
