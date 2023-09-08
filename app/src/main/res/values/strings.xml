@@ -4,7 +4,6 @@
     <string name="body_title1">Vegetarian</string>
     <string name="body_title2">Tabata</string>
     <string name="body_title3">Quick yoga</string>
-
     <string name="favoritecard_title1">Natural Meditation</string>
     <string name="favoritecard_title2">Cooking Meditation</string>
     <string name="favoritecard_title3">Musical Meditation</string>
@@ -12,5 +11,6 @@
     <string name="favorite_collections">Favorite Collections</string>
     <string name="bottom_navigation_home">Home</string>
     <string name="bottom_navigation_profile">Profile</string>
+    <string name="title_activity_main3">MainActivity3</string>
 
 </resources>

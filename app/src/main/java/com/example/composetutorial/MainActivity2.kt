@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -54,7 +55,13 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -70,21 +77,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 class MainActivity2 : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val message = intent.getStringExtra("value1") ?: ""
         setContent {
-            ComposeTutorialTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppPortrait()
-
+                    val windowSizeClass = calculateWindowSizeClass(activity = this)// calculate size of the current window
+                    myTutorialApp(windowSize = windowSizeClass)
                 }
-            }
+        }
+    }
+}
+@Composable
+fun myTutorialApp(windowSize : WindowSizeClass){
+    when(windowSize.widthSizeClass){
+        WindowWidthSizeClass.Compact -> {
+            AppPortrait()
+        }
+        WindowWidthSizeClass.Expanded ->{
+            AppLandscapeStyle()
         }
     }
 }
@@ -99,6 +115,54 @@ fun AppPortrait() {
         }
     }
 }
+@Preview
+@Composable
+fun previewAppLandScape(){
+    AppLandscapeStyle()
+}
+// landscape style
+@Composable
+fun AppLandscapeStyle(){
+    ComposeTutorialTheme {
+        Row {
+            NavigationRailSetup()
+            HomeScreen()
+        }
+    }
+}
+@Composable
+private fun NavigationRailSetup(modifier: Modifier = Modifier){
+    NavigationRail(
+        modifier = modifier.padding(start = 8.dp, end = 8.dp),
+        contentColor = MaterialTheme.colorScheme.background
+    ) {
+        Column(
+            modifier = modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            NavigationRailItem(
+                selected =  true,
+                onClick = { /*TODO*/ },
+                icon = {
+                    Icon(imageVector = Icons.Default.Home, contentDescription = null )
+                },
+                label = { "Home" }
+            )
+            Spacer(modifier = modifier.height(8.dp))
+            NavigationRailItem(
+                selected = false , onClick = { /*TODO*/ },
+                icon = {
+                    Icon(imageVector = Icons.Default.AccountCircle, contentDescription =  null )
+                },
+                label = {"Profile"}
+            )
+        }
+    }
+}
+// end landsape style
+
+// start Portrait style
 @Composable
 private fun BottomNavigation(modifier: Modifier = Modifier) {
     NavigationBar(
@@ -139,7 +203,8 @@ private fun BottomNavigation(modifier: Modifier = Modifier) {
 }
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
-    Column(  modifier.verticalScroll(rememberScrollState())) {
+    Column(  modifier.verticalScroll(rememberScrollState())
+        .background(color = MaterialTheme.colorScheme.background)) {
         Spacer(Modifier.height(16.dp))
         searchBar(Modifier.padding(horizontal = 16.dp))
         HomeSection(title = R.string.align_your_body) {
@@ -164,6 +229,8 @@ fun HomeSection( // set the title and exact composable
 ) {
     Column(modifier) {
         Log.v("check_in", title.toString())
+        Log.v("check_in",stringResource(title) )
+
         Text(
             text = stringResource(title),
             style = MaterialTheme.typography.titleMedium,
