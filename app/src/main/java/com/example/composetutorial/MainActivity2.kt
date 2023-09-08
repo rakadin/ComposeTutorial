@@ -1,5 +1,6 @@
 package com.example.composetutorial
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -69,6 +70,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -132,6 +134,7 @@ fun AppLandscapeStyle(){
 }
 @Composable
 private fun NavigationRailSetup(modifier: Modifier = Modifier){
+    val mContext = LocalContext.current
     NavigationRail(
         modifier = modifier.padding(start = 8.dp, end = 8.dp),
         contentColor = MaterialTheme.colorScheme.background
@@ -151,7 +154,8 @@ private fun NavigationRailSetup(modifier: Modifier = Modifier){
             )
             Spacer(modifier = modifier.height(8.dp))
             NavigationRailItem(
-                selected = false , onClick = { /*TODO*/ },
+                selected = false , onClick = {  val intent = Intent(mContext,MainActivity3::class.java)
+                    mContext.startActivity(intent) },
                 icon = {
                     Icon(imageVector = Icons.Default.AccountCircle, contentDescription =  null )
                 },
@@ -165,6 +169,7 @@ private fun NavigationRailSetup(modifier: Modifier = Modifier){
 // start Portrait style
 @Composable
 private fun BottomNavigation(modifier: Modifier = Modifier) {
+    val mContext = LocalContext.current
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         modifier = modifier
@@ -197,6 +202,8 @@ private fun BottomNavigation(modifier: Modifier = Modifier) {
             },
             selected = false,
             onClick = {
+                val intent = Intent(mContext,MainActivity3::class.java)
+                mContext.startActivity(intent)
             }
         )
     }

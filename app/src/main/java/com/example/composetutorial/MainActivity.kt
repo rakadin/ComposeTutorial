@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatDelegate
@@ -143,7 +144,9 @@ fun MessageCard(msg : Message,navController : NavController){
             Text(if (isExpanded) "Less" else "More")
         }
         ElevatedButton(onClick =
-        {   val intent = Intent(mcontext,MainActivity2::class.java)
+        {
+            Log.d("Activity", "activity 2")
+            val intent = Intent(mcontext,MainActivity2::class.java)
             intent.putExtra("value1",msg.author+" send " +msg.body)
             mcontext.startActivity(intent) },
             modifier = Modifier.padding(all = 6.dp)) {
