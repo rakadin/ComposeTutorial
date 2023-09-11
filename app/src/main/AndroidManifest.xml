@@ -13,6 +13,23 @@
         android:theme="@style/Theme.ComposeTutorial"
         tools:targetApi="31">
         <activity
+            android:name=".xml_activities.LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ComposeTutorial">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity4"
+            android:exported="false"
+            android:label="@string/title_activity_main4"
+            android:theme="@style/Theme.ComposeTutorial">
+
+        </activity>
+        <activity
             android:name=".MainActivity3"
             android:exported="false"
             android:label="@string/title_activity_main3"
@@ -26,13 +43,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.ComposeTutorial">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.ComposeTutorial" />
     </application>
 
 </manifest>
